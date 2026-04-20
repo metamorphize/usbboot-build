@@ -24,8 +24,30 @@ jobs:
         run: |
           make
 
+      - name: Bundle dependencies
+        run: |
+          LIBUSB_PATH=$(brew --prefix libusb)/lib/libusb-1.0.0.dylib
+        
+          mkdir -p bundle/lib
+          cp rpiboot bundle/
+          cp "$LIBUSB_PATH" bundle/lib/
+
+          # Change dynamic linker path
+          install_name_tool -change "$LIBUSB_PATH" \
+            @rpath/libusb-1.0.0.dylib \
+            bundle/rpiboot
+      
+          install_name_tool -add_rpath @executable_path/lib bundle/rpiboot
+
+          # Check if libusb was bundled correctly
+          otool -L bundle/rpiboot
+
+      - name: Archive bundle
+        run: |
+          tar -czf rpiboot-macos.tar.gz bundle
+
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: rpiboot
-          path: rpiboot
+          name: rpiboot-macos
+          path: rpiboot-rpiboot-macos.tar.gz
