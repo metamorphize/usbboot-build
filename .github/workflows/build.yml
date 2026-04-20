@@ -1,3 +1,15 @@
+#
+# Build rpiboot (raspberrypi/usbboot) for macOS
+#
+# - Checkout raspberrypi/usbboot
+# - Install dependencies (libusb, pkg-config)
+# - Build
+# - Include and update libusb linker path
+# - Archive (as bundle including libusb)
+# - Create GitHub Release
+#
+
+
 name: Build rpiboot (macOS)
 
 on:
@@ -6,6 +18,9 @@ on:
 jobs:
   build:
     runs-on: macos-latest
+
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -46,9 +61,9 @@ jobs:
         run: |
           tar -czf rpiboot-macos.tar.gz -C bundle .
 
-      - name: Create GitHub Release (official API)
+      - name: Create GitHub Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "$GITHUB_REF_NAME" \
             rpiboot-macos.tar.gz \
