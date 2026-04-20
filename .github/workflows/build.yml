@@ -71,3 +71,4 @@ jobs:
             rpiboot-macos.tar.gz \
             --title "rpiboot $DATE $REVISION" \
             --notes "rpiboot macOS build with bundled libusb"
+            --repo "$GITHUB_REPOSITORY"
