@@ -13,6 +13,8 @@
 name: Build rpiboot (macOS)
 
 on:
+  schedule:
+    - cron: "0 0 15 2,5,8,11 *"
   workflow_dispatch:
 
 jobs:
@@ -54,12 +56,17 @@ jobs:
       
           install_name_tool -add_rpath @executable_path/lib bundle/rpiboot
 
-          # Check if libusb was bundled correctly
-          otool -L bundle/rpiboot
+          # otool -L bundle/rpiboot
 
       - name: Archive bundle
         run: |
           tar -czf rpiboot-macos.tar.gz -C bundle .
+
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v7
+#        with:
+#          name: rpiboot-macos
+#          path: rpiboot-macos.tar.gz
 
       - name: Create GitHub Release
         env:
@@ -70,5 +77,5 @@ jobs:
           gh release create "$REVISION" \
             rpiboot-macos.tar.gz \
             --title "rpiboot $DATE $REVISION" \
-            --notes "rpiboot macOS build with bundled libusb" \
+            --notes "[rpiboot](https://github.com/raspberrypi/usbboot) macOS build bundled with libusb" \
             --repo "$GITHUB_REPOSITORY"
