@@ -65,7 +65,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "$GITHUB_REF_NAME" \
+          DATE="$(date +%Y/%m/%d)"
+          REVISION="$(git rev-parse --short HEAD)"
+          gh release create "$REVISION" \
             rpiboot-macos.tar.gz \
-            --title "rpiboot $GITHUB_REF_NAME" \
+            --title "rpiboot $DATE $REVISION" \
             --notes "rpiboot macOS build with bundled libusb"
