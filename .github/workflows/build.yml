@@ -44,10 +44,13 @@ jobs:
 
       - name: Archive bundle
         run: |
-          tar -czf rpiboot-macos.tar.gz bundle
+          tar -czf rpiboot-macos.tar.gz -C bundle .
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: rpiboot-macos
-          path: rpiboot-macos.tar.gz
+      - name: Create GitHub Release (official API)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            rpiboot-macos.tar.gz \
+            --title "rpiboot $GITHUB_REF_NAME" \
+            --notes "rpiboot macOS build with bundled libusb"
